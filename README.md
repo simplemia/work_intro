@@ -1,11 +1,9 @@
-<<<<<<< HEAD
-CODE/CheckIdCard is a application to verify the IDCARD;
 
-CODE/NLP ICTclas is a test part of natural language process(Chinese);
+CODE/CheckIdCard __is__ a application to verify the IDCARD;
 
-CODE/Sougou_seg is the classified words from the model of Bayesian;
+CODE/NLP ICTclas __is__ a test part of natural language process(Chinese);
 
-tools_for_analyser is a multi-function application to extract data from HDFS for analysis or modelling;
-=======
-# work_intro
->>>>>>> 92fb7da044f739aa0ad5d2a693938a6656ad4c23
+CODE/Sougou_seg __is__ the classified words from the model of Bayesian;
+
+tools\_for\_analyser __is__ a multi-function application to extract data from HDFS for analysis or modelling;
+
