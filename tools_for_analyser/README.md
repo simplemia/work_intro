@@ -1,6 +1,6 @@
 ## Laplapce  ##
 
-Laplapce is an application for analysis coworkers to get data in various common conditions from hadoop.
+Laplapce is a customizable application for conveniently extracting data from hadoop file systme for analysis.
     
     eg：get offline users' behaviors from 201501 to 201504 
 
@@ -15,21 +15,22 @@ Laplapce is an application for analysis coworkers to get data in various common 
 ###MR_script
 
 **getMap.py**
-> it is a multi-function map script. it can be controlled by some certain arguments. such as extracting the certain keys in file, using lambda function to get needed line in the certain conditions.
+> this is a multi-function map script controlled by several argument options. It can perform various kinds of tasks, such as extracting keys in file, using lambda function to get required lines under certain conditions, etc.
 > 
-> the argument '-k' could not be empty, the argument '-f' designates the key file, argument '-v' designates the value of map；
+> the argument '-k' should not be empty, the argument '-f' designates the key file, argument '-v' designates the value of map；
 	
 	hadoop fs -cat /home/manman.xu/MERGE_MAP_EXTRACT_offline/2015_03/p* |python2.7 getMap.py -k "lambda x: \"\t\".join(x) if x[2]==\"1\" else None "
 
 **getMerge.py**
 
-> After getting the results of previous script, it is a simple collected reduce script to collect one key's mul-months data, and generate a csv report or a hdfs file. the results is as following.
-> 
-> the argument '-r' designates the sequence of the output. 
 
+> After getting the results from previous script, this is a simple reduce script to collect one key's mul-months data, and to generate a csv report or an hdfs file.
+> 
+> the argument '-r' designates the sequence of the output.
+>
 	hadoop fs -cat /home/manman.xu/MAP_EXTRACT_offline/2015_*/p* |python2.7 getMerge.py -r "2015_01,2015_02,2015_03,2015_04"
 
-> results
+> the results are as following.
 
 	key,2015_01,2015_02,2015_03,2015_04
 	13002900389,微信,手机QQ,None,微信
@@ -43,7 +44,7 @@ Laplapce is an application for analysis coworkers to get data in various common 
 
 **CONF_DIR.py**  
 
-> simplifing using the common directions, using the key rename the directions.
+> This script is to simplify the path directories, using the key to rename the directories
 
 	D_dirs={
 	'cate':'/data/category/basic_union/merge/merge/%s/%s',   #标签目录
@@ -54,17 +55,17 @@ Laplapce is an application for analysis coworkers to get data in various common 
 
 
 **Streaming.py**
-> it is class running the hadoop streaming with some common purposes. such executing a streaming scripts with certain map or shell commands, then you will get a full command that could run in hadoop, and download it in local place. 
 
-> aulmatically deal with the direction of output
-> 
-> support different ways to deal with files；
+> This is a class to run the hadoop streaming with general purposes, such as executing a streaming script with certain map or shell commands that could run in hadoop, and also download the data to local place.
+> It automatically deals with the directory of output
+> It supports different ways to deal with different types of files；
+
 
 **Extract.py** 
->  it inherits the class of Streaming.Streaming, and call the fuctions to accomplisg the series streaming scripts. 
+>  This script inherits the class of Streaming. and calls the functions to run the pipeline of streaming scripts.
 	
 	python2.7 Extract.py -m '7-8' -d 'loc' -f lac_id.conf -k '4'
-> output 
+> the output are as following.
 
     hadoop fs -test -e '/home/manman.xu/EXTRACT_location_info/2015_07'
     hadoop jar /yjcom/app/hadoop-2.3.0-cdh5.1.0/share/hadoop/mapreduce1/contrib/streaming/hadoop-streaming.jar -D mapred.job.priority='HIGH' -D mapred.job.tracker='cdh246:9001' -D mapred.job.dir='UnicomExtract' -file '/data03/manman.xu/public/mutil_combine_reports/tools_for_analyser/MR_script/getMap.py' -file '/data03/manman.xu/public/mutil_combine_reports/tools_for_analyser/lac_id.conf' -mapper "python2.7 getMap.py -f 'lac_id.conf' -k '4'  " -reducer "NONE"  -output '/home/manman.xu/EXTRACT_location_info/2015_07' -input '/data/category/location_info/raws/2015/07/*'
@@ -76,8 +77,11 @@ Laplapce is an application for analysis coworkers to get data in various common 
 	hadoop fs -cat /home/manman.xu/EXTRACT_location_info/2015_08/* > results/EXTRACT_location_info.2015_08
 
 **Reports.py**  
-it is a scripts to call the class of Extract.py to collect mul-months results, then generate corresponding reports.
-Fri-part：each line of each input plus its corresponding date on the end of line；Sed-part：using getMerge.py script to collect results by different key.
+>This is a scripts to call the class of Extract.py to collect mul-months results, then generate corresponding reports.
+> 
+>Fri-part：each line of input plus its corresponding date on the end of line；
+>
+>Sed-part：using getMerge.py script to collect results by different key.
 	
 	python2.7 Reports.py -f 'liushi0102_no.sample' -k '0' -v '1' -m '03' -d offline
 
